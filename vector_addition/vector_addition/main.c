@@ -2,10 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#pragma optimize( "" , off )
 
 
-#define VECTOR_SIZE 32768
+#define VECTOR_SIZE 16384
 #define LOCAL_SIZE 256
+
 #define CHECK_ERROR(err) \
     if (err != CL_SUCCESS) { \
         printf("[%s:%d] OpenCL error %d\n", __FILE__, __LINE__, err); \
@@ -99,12 +101,16 @@ void main() {
 
 	// Create kernel
 	cl_kernel kernel;
-	cl_mem bufA, bufB, bufC;
 
 	kernel = clCreateKernel(program, "vec_add", &err);
 	CHECK_ERROR(err);
 
+	clock_t start;
+	start = clock();
+
 	// Create Buffer
+	cl_mem bufA, bufB, bufC;
+
 	bufA = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(int) * VECTOR_SIZE, NULL, &err);
 	CHECK_ERROR(err);
 
@@ -122,11 +128,6 @@ void main() {
 	CHECK_ERROR(err);
 
 	// Set Kernel arguments
-	clock_t start;
-	clock_t end;
-
-
-	start = clock();
 	err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &bufA);
 	CHECK_ERROR(err);
 
@@ -135,47 +136,37 @@ void main() {
 
 	err = clSetKernelArg(kernel, 2, sizeof(cl_mem), &bufC);
 	CHECK_ERROR(err);
-	end = clock();
-
-	printf("Send Vector A, B to GPU : %lf seconds elapsed\n", (double)end - start);
-
 
 	start = clock();
-	// Execute Kernel
 	size_t global_size = VECTOR_SIZE;
 	size_t local_size = LOCAL_SIZE;
 	clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &global_size, &local_size, 0, NULL, NULL);
 	CHECK_ERROR(err);
-	end = clock();
 
-	printf("Calculate C : %lf seconds elapsed\n", (double)end - start);
-
-	// Read Buffer
-	start = clock();
+	// Read Buffer 
 	err = clEnqueueReadBuffer(queue, bufC, CL_TRUE, 0, sizeof(int) * VECTOR_SIZE, C, 0, NULL, NULL);
 	CHECK_ERROR(err);
 
-	end = clock();
-	printf("Receive C from GPU : %lf seconds elapsed\n",(double) end - start);
+	printf("Execution time: %lfsec\n", (float)(clock() - start) / CLOCKS_PER_SEC);
 
+	start = clock();
 	// Evaluate Vector C
 	for (idx = 0; idx < VECTOR_SIZE; idx++) {
+		//printf("%d ", idx);
+
 		if (A[idx] + B[idx] != C[idx]) {
 			printf("Verification failed! A[%d] = %d, B[%d] = %d, C[%d] = %d\n", idx, A[idx], idx, B[idx], idx, C[idx]);
 			break;
 		}
 	}
+	printf("\n");
+	printf("Execution time: %lfsec\n", (float)(clock() - start) / CLOCKS_PER_SEC);
+
 	if (idx == VECTOR_SIZE) {
 		printf("Verification success!\n");
 	}
 
 
-
-	/*
-	 * 여기서부터 병렬 처리를 위한 나머지 호스트 코드를 작성하세요.
-	 */
-
-	printf("Execution time: %lfsec\n", (float)(clock() - start) / CLOCKS_PER_SEC);
 
 	err = clReleaseMemObject(bufA);
 	err = clReleaseMemObject(bufB);
