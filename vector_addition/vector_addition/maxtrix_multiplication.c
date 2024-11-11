@@ -1,7 +1,6 @@
 #include <CL/cl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <time.h>
 
 #define CHECK_ERROR(err) \
@@ -13,7 +12,7 @@
 #define ROWA 1000
 #define COLUMNA_ROWB 1000
 #define COLUMNB 1000
-
+#define RANDOMMAX 10000
 
 char* get_source_code(const char* file_name, size_t* len) {
 	FILE* file;
@@ -94,13 +93,13 @@ int main() {
 
 	for (int i = 0; i < ROWA; i++) {
 		for (int j = 0; j < COLUMNA_ROWB; j++) {
-			A[i * COLUMNA_ROWB + j] = (float)(rand() % 1000) / 100.0f;
+			A[i * COLUMNA_ROWB + j] = (rand() % 10000 + 1) * 0.01f;
 		}
 	}
 
 	for (int i = 0; i < COLUMNA_ROWB; i++) {
 		for (int j = 0; j < COLUMNB; j++) {
-			B[i * COLUMNB + j] = (float)(rand() % 1000) / 100.0f;
+			B[i * COLUMNB + j] = (rand() % 10000 + 1) * 0.01f;
 		}
 	}
 
@@ -130,7 +129,7 @@ int main() {
 	clock_t start;
 	clock_t end;
 
-	//start = clock();
+	start = clock();
 	err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &bufA);
 	CHECK_ERROR(err);
 
@@ -152,61 +151,46 @@ int main() {
 	int columnB = COLUMNB;
 	err = clSetKernelArg(kernel, 5, sizeof(cl_int), &columnB);
 	CHECK_ERROR(err);
-	//end = clock();
+	end = clock();
 
-	//printf("Send Vector A, B to GPU : %lf seconds elapsed\n", (double)(end - start) / CLOCKS_PER_SEC);
+	printf("Send Vector A, B to GPU : %lf seconds elapsed\n", (double)end - start);
 
 
 	start = clock();
-	printf("%lf\n", (double)start / CLOCKS_PER_SEC);
 	// Execute Kernel
-	size_t global_size[2] = { COLUMNB, ROWA };
-	size_t local_size[2] = { 10, 10 };
-
-	// printf("global[0]: %d , global[1]: %d\n", global_size[0], global_size[1]);
-	clEnqueueNDRangeKernel(queue, kernel, 2, NULL, global_size, local_size, 0, NULL, NULL);
+	size_t global_size[2] = {ROWA, COLUMNB};
+	size_t local_size[2] = {16, 16};
+	clEnqueueNDRangeKernel(queue, kernel, 2, NULL, &global_size, &local_size, 0, NULL, NULL);
 	CHECK_ERROR(err);
 	end = clock();
-	printf("%lf\n", (double)end / CLOCKS_PER_SEC);
 
-	printf("Calculate C : %lf seconds elapsed\n", (double)(end - start) / CLOCKS_PER_SEC);
+	printf("Calculate C : %lf seconds elapsed\n", (double)end - start);
 
 	// Read Buffer
-	//start = clock();
+	start = clock();
 	err = clEnqueueReadBuffer(queue, bufC, CL_TRUE, 0, sizeof(float) * ROWA * COLUMNB, C, 0, NULL, NULL);
 	CHECK_ERROR(err);
 
-	//end = clock();
-	//printf("Receive C from GPU : %lf seconds elapsed\n", (double)(end - start) / CLOCKS_PER_SEC);
+	end = clock();
+	printf("Receive C from GPU : %lf seconds elapsed\n",(double) end - start);
 
-	float sum;
 	for (int i = 0; i < ROWA; i++) {
 		for (int j = 0; j < COLUMNB; j++) {
-			sum = 0.0f;
-	
+			checkC[i * COLUMNB + j] = 0.0f;
 			for (int k = 0; k < COLUMNA_ROWB; k++) {
-				sum += A[i * COLUMNA_ROWB + k] * B[k * COLUMNB + j];
-				//checkC[i * COLUMNB + j] += A[i * COLUMNA_ROWB + k] * B[k * COLUMNB + j];
-			}
-			if (fabsf(C[i * COLUMNB + j] - sum) > 0.1) {
-				printf("Verification failed! C[%d][%d]: %f vs. %f\n",
-					i, j, C[i * COLUMNB + j], sum);
-				return;
+				checkC[i * COLUMNB + j] += A[i * COLUMNA_ROWB + k] * B[k * COLUMNB + j];
 			}
 		}
 	}
 
-	printf("Verification Success\n");
-
-	/*for (int i = 0; i < ROWA; i++) {
+	for (int i = 0; i < ROWA; i++) {
 		for (int j = 0; j < COLUMNB; j++) {
-			if (checkC[i * COLUMNB + j] != C[i * COLUMNB + j]) {
-				printf("%lf :  %lf  zz ", checkC[i * COLUMNB + j], C[i * COLUMNB + j]);
-				printf("Verification failed! row: %d, columne %d\n", i + 1, j + 1);
+			if (checkC[i * COLUMNB + j] !=  C[i * COLUMNB + j]) {
+				printf("Verification failed! row: %d, columne %d\n", i +1, j+1);
 				break;
 			}
 		}
-	}*/
+	}
 
 	err = clReleaseMemObject(bufA);
 	err = clReleaseMemObject(bufB);
