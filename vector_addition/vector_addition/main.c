@@ -150,9 +150,7 @@ void main() {
 	printf("Execution time: %lfsec\n", (float)(clock() - start) / CLOCKS_PER_SEC);
 
 	start = clock();
-	// Evaluate Vector C
 	for (idx = 0; idx < VECTOR_SIZE; idx++) {
-		//printf("%d ", idx);
 
 		if (A[idx] + B[idx] != C[idx]) {
 			printf("Verification failed! A[%d] = %d, B[%d] = %d, C[%d] = %d\n", idx, A[idx], idx, B[idx], idx, C[idx]);
