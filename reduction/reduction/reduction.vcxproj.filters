@@ -15,21 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\Users\asher\Downloads\OpenCL_03_Rotation\rotation.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\Users\asher\Downloads\OpenCL_03_Rotation\bmpfuncs.h">
+    <ClInclude Include="..\..\..\..\..\Users\asher\Downloads\OpenCL_04_Integral\integral.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Users\asher\Downloads\OpenCL_03_Rotation\main.c">
+    <ClCompile Include="..\..\..\..\..\Users\asher\Downloads\OpenCL_04_Integral\integral.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\Users\asher\Downloads\OpenCL_03_Rotation\rotation.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\..\Users\asher\Downloads\OpenCL_03_Rotation\bmpfuncs.c">
+    <ClCompile Include="..\..\..\..\..\Users\asher\Downloads\OpenCL_04_Integral\main.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -37,10 +31,5 @@
     <None Include="kernel.cl">
       <Filter>소스 파일</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\..\..\..\..\Users\asher\Downloads\OpenCL_03_Rotation\input1.bmp">
-      <Filter>소스 파일</Filter>
-    </Image>
   </ItemGroup>
 </Project>

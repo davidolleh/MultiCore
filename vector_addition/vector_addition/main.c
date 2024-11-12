@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#pragma optimize( "" , off )
-
 
 #define VECTOR_SIZE 16384
 #define LOCAL_SIZE 256
@@ -137,7 +135,6 @@ void main() {
 	err = clSetKernelArg(kernel, 2, sizeof(cl_mem), &bufC);
 	CHECK_ERROR(err);
 
-	start = clock();
 	size_t global_size = VECTOR_SIZE;
 	size_t local_size = LOCAL_SIZE;
 	clEnqueueNDRangeKernel(queue, kernel, 1, NULL, &global_size, &local_size, 0, NULL, NULL);
@@ -149,16 +146,12 @@ void main() {
 
 	printf("Execution time: %lfsec\n", (float)(clock() - start) / CLOCKS_PER_SEC);
 
-	start = clock();
 	for (idx = 0; idx < VECTOR_SIZE; idx++) {
-
 		if (A[idx] + B[idx] != C[idx]) {
 			printf("Verification failed! A[%d] = %d, B[%d] = %d, C[%d] = %d\n", idx, A[idx], idx, B[idx], idx, C[idx]);
 			break;
 		}
 	}
-	printf("\n");
-	printf("Execution time: %lfsec\n", (float)(clock() - start) / CLOCKS_PER_SEC);
 
 	if (idx == VECTOR_SIZE) {
 		printf("Verification success!\n");

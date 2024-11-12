@@ -160,8 +160,11 @@ int main() {
 	start = clock();
 	printf("%lf\n", (double)start / CLOCKS_PER_SEC);
 	// Execute Kernel
-	size_t global_size[2] = { COLUMNB, ROWA };
+	size_t global_size[2] = { ROWA, COLUMNB };
 	size_t local_size[2] = { 10, 10 };
+
+	global_size[0] = (global_size[0] + local_size[0] - 1) / local_size[0] * local_size[0];
+	global_size[1] = (global_size[1] + local_size[1] - 1) / local_size[1] * local_size[1];
 
 	// printf("global[0]: %d , global[1]: %d\n", global_size[0], global_size[1]);
 	clEnqueueNDRangeKernel(queue, kernel, 2, NULL, global_size, local_size, 0, NULL, NULL);
@@ -222,4 +225,4 @@ int main() {
 
 	free(kernel_source);
 
-}s
+}
