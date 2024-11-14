@@ -14,4 +14,36 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\Users\asher\Downloads\CNN_PROJECT\main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Users\asher\Downloads\CNN_PROJECT\cnn_opencl.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Users\asher\Downloads\CNN_PROJECT\cnn_seq.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\Users\asher\Downloads\CNN_PROJECT\compare.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\Users\asher\Downloads\CNN_PROJECT\cnn.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\..\..\Users\asher\Downloads\CNN_PROJECT\right_answer.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
+    <Text Include="..\..\..\..\..\Users\asher\Downloads\CNN_PROJECT\right_answer_3000.txt">
+      <Filter>소스 파일</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\..\Users\asher\Downloads\CNN_PROJECT\network.bin">
+      <Filter>리소스 파일</Filter>
+    </None>
+  </ItemGroup>
 </Project>
